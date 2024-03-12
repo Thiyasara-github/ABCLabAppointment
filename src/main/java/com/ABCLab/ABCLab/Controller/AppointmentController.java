@@ -19,6 +19,7 @@ import java.util.List;
 public class AppointmentController {
 
 
+
     private final AppointmentRepo appointmentRepo;
     private final ApplicationEventPublisher eventPublisher;
     @Autowired
@@ -56,6 +57,18 @@ public class AppointmentController {
 
     @PostMapping("/appointments")
     public Appointment addAppointment(@RequestBody Appointment appointment) {
+        // Generate the lastDigit and paymentId
+        String aid = String.valueOf(appointment.getAid());
+        String lastDigit = String.valueOf(aid.charAt(aid.length() - 1));
+        String paymentId = aid.substring(Math.max(0, aid.length() - 4));
+
+        // Add logs
+        System.out.println("lastDigit: " + lastDigit);
+        System.out.println("paymentId: " + paymentId);
+
+        // Set the values in the Appointment entity
+        appointment.setLastDigit(lastDigit);
+        appointment.setPaymentId(paymentId);
 
         // Save the appointment, MongoDB will auto-generate the aid
         Appointment savedAppointment = appointmentRepo.save(appointment);
@@ -65,6 +78,8 @@ public class AppointmentController {
 
         return savedAppointment;
     }
+
+
 
 
 
@@ -94,7 +109,7 @@ public class AppointmentController {
                 + "ABC Laboratory Team..!\n";
 
         eventPublisher.publishEvent(new SendEmailEvent(this, toEmail, subject, body));
+
     }
+
 }
-
-

@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigInteger;
 
@@ -14,20 +15,22 @@ public class Appointment {
 
     @Id
     private BigInteger aid;
-
     private String name;
     private String test;
     private String email;
     private String doctor;
     private String datetime;
-    private char lastDigit;
+    @Field("lastDigit")
+    private String lastDigit;
+
+    @Field("paymentId")
     private String paymentId;
 
-    public char getLastDigit() {
+    public String getLastDigit() {
         return lastDigit;
     }
 
-    public void setLastDigit(char lastDigit) {
+    public void setLastDigit(String lastDigit) {
         this.lastDigit = lastDigit;
     }
 
