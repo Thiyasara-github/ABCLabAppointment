@@ -20,6 +20,24 @@ public class Appointment {
     private String email;
     private String doctor;
     private String datetime;
+    private char lastDigit;
+    private String paymentId;
+
+    public char getLastDigit() {
+        return lastDigit;
+    }
+
+    public void setLastDigit(char lastDigit) {
+        this.lastDigit = lastDigit;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
 
     public BigInteger getAid() {
         return aid;
