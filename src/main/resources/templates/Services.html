@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Services</title>
+    <!-- Include jQuery and DataTables CSS/JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-image: url('path/to/your/image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        #testServicesTableContainer {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #testServicesTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            border: 2px solid #ddd;
+        }
+
+        #testServicesTable th, #testServicesTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #testServicesTable th {
+            background-color: #f2f2f2;
+        }
+
+        #serviceForm {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #serviceForm label {
+            margin-bottom: 5px;
+        }
+
+        #serviceForm input, #serviceForm textarea {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #submitBtn, #submitBtn:hover, #updateBtn, #updateBtn:hover, .deleteBtn, .deleteBtn:hover {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 150px;
+            text-align: center;
+        }
+
+        #submitBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #updateBtn {
+            background-color: #FFD700;
+            color: white;
+        }
+
+        .deleteBtn {
+            background-color: #FF0000;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div id="testServicesTableContainer">
+    <table id="testServicesTable" class="display">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Doctors</th>
+            <th>Dates</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <form id="serviceForm">
+        <label for="serviceId">Service ID:</label>
+        <input type="text" id="serviceId" name="serviceId" required>
+
+        <label for="serviceName">Service Name:</label>
+        <input type="text" id="serviceName" name="serviceName" required>
+
+        <label for="doctors">Doctors (comma-separated):</label>
+        <textarea id="doctors" name="doctors" required></textarea>
+
+        <label for="dates">Dates (comma-separated):</label>
+        <textarea id="dates" name="dates" required></textarea>
+
+        <button type="button" onclick="submitService()" id="submitBtn">Add Test</button>
+        <button type="button" onclick="submitService()" id="updateBtn" style="display:none;">Update Test</button>
+    </form>
+</div>
+
+<!-- ... (your existing HTML code) -->
+
+<script>
+    let selectedServiceId;
+
+    $(document).ready(function() {
+        // DataTable initialization
+        const dataTable = $('#testServicesTable').DataTable({
+            ajax: {
+                url: 'http://localhost:8081/all',
+                dataSrc: ''
+            },
+            columns: [
+                { data: 'sid' },
+                { data: 'sname' },
+                {
+                    data: 'doctors',
+                    render: function(data, type, row) {
+                        // Join doctors with line breaks
+                        return data.join('<br>');
+                    }
+                },
+                {
+                    data: 'dates',
+                    render: function(data, type, row) {
+                        // Join dates with line breaks
+                        return data.join('<br>');
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        // Add a delete button for each row
+                        return '<button class="deleteBtn" onclick="deleteService(' + row.sid + ')">Delete</button>';
+                    }
+                }
+            ]
+        });
+
+        // Handle row selection
+        $('#testServicesTable tbody').on('click', 'tr', function() {
+            const data = dataTable.row(this).data();
+            selectedServiceId = data.sid;
+
+            // Fill the form with selected data
+            $('#serviceId').val(data.sid);
+            $('#serviceName').val(data.sname);
+            $('#doctors').val(data.doctors.join(', '));
+            $('#dates').val(data.dates.join(', '));
+
+            // Change button text to Update Test and show the Update button
+            $('#submitBtn').text('Add Test');
+            $('#submitBtn').hide();
+            $('#updateBtn').show();
+        });
+    });
+
+    function submitService() {
+        const serviceId = $('#serviceId').val();
+        const serviceName = $('#serviceName').val();
+        const doctors = $('#doctors').val().split(',').map(doctor => doctor.trim());
+        const dates = $('#dates').val().split(',').map(date => date.trim());
+
+        const serviceData = {
+            sid: serviceId,
+            sname: serviceName,
+            doctors: doctors,
+            dates: dates
+        };
+
+        const url = serviceId ? 'http://localhost:8081/updateService' : 'http://localhost:8081/addService';
+        const method = serviceId ? 'PUT' : 'POST';
+
+        $.ajax({
+            type: method,
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(serviceData),
+            success: function() {
+                alert(`Service ${serviceId ? 'updated' : 'added'} successfully!`);
+                // Reload the DataTable to display the updated data
+                $('#testServicesTable').DataTable().ajax.reload();
+                // Clear the form after submission
+                clearForm();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error submitting service:', jqXHR.responseText);
+                alert(`Error submitting service. Please check the console for details.`);
+            }
+        });
+    }
+
+    function deleteService(serviceId) {
+        if (confirm("Are you sure you want to delete this service?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: 'http://localhost:8081/deleteService/' + serviceId,
+                success: function() {
+                    alert('Service deleted successfully!');
+                    // Reload the DataTable to display the updated data
+                    $('#testServicesTable').DataTable().ajax.reload();
+                    // Clear the form after deletion
+                    clearForm();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error deleting service:', jqXHR.responseText);
+                    alert('Error deleting service. Please check the console for details.');
+                }
+            });
+        }
+    }
+
+    function clearForm() {
+        $('#serviceId').val('');
+        $('#serviceName').val('');
+        $('#doctors').val('');
+        $('#dates').val('');
+
+        // Reset button text to Add Test and hide the Update button
+        $('#submitBtn').text('Add Test');
+        $('#submitBtn').show();
+        $('#updateBtn').hide();
+    }
+</script>
+
+</body>
+</html>
+
+
+</body>
+</html>
