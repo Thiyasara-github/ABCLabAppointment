@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Services</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Include DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+
+    <!-- Include Toastr JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body class="container mt-5">
+
+<div id="notification-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;"></div>
+
+<h2 class="mb-4">Lab Services</h2>
+
+<table id="labServicesTable" class="table display">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Doctors</th>
+        <th>Dates</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h2 class="mt-5 mb-4">Appointment Form</h2>
+
+<form id="appointmentForm" action="http://localhost:8081/appointments" method="post">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="test">Test:</label>
+        <input type="text" class="form-control" id="test" name="test" required>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+        <label for="doctor">Doctor:</label>
+        <input type="text" class="form-control" id="doctor" name="doctor" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="datetime">Date and Time:</label>
+        <input type="text" class="form-control" id="datetime" name="datetime" readonly>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Book Appointment</button>
+</form>
+
+<!-- Bootstrap JS and Popper.js (required for Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- Include DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<!-- Include Toastr JS -->
+<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+        // Fetch data from the API
+        $.ajax({
+            url: 'http://localhost:8081/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Populate the DataTable with the fetched data
+                $('#labServicesTable').DataTable({
+                    data: data,
+                    columns: [
+                        { data: 'sid' },
+                        { data: 'sname' },
+                        { data: 'doctors', render: function(data) {
+                            return renderRadioButtons(data, 'doctor');
+                        }},
+                        { data: 'dates', render: function(data) {
+                            return renderRadioButtons(data, 'datetime');
+                        }}
+                    ]
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+
+        function renderRadioButtons(data, fieldName) {
+            return data.map(function(item) {
+                return '<input type="radio" name="' + fieldName + '" value="' + item + '">' + item + '<br>';
+            }).join('');
+        }
+
+        // Listen for radio button changes and update form fields
+        $('#labServicesTable tbody').on('change', 'input[type="radio"]', function() {
+            var fieldName = $(this).attr('name');
+            var selectedValue = $(this).val();
+            $('#' + fieldName).val(selectedValue);
+        });
+
+        // Submit form using JSON data
+        $('#appointmentForm').submit(function(event) {
+            event.preventDefault();
+
+            var formData = {
+                name: $('#name').val(),
+                test: $('#test').val(),
+                email: $('#email').val(),
+                doctor: $('#doctor').val(),
+                datetime: $('#datetime').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8081/appointments',
+                contentType: 'application/json', // Set the Content-Type to JSON
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log('Appointment booked successfully:', response);
+                    // Display success notification at the center of the webpage
+                    toastr.success('Appointment booked successfully!', { positionClass: 'toast-center' });
+                    // Additional handling if needed
+                },
+                error: function(error) {
+                    console.error('Error booking appointment:', error);
+                    // Display error notification at the center of the webpage
+                    toastr.error('Error booking appointment. Please try again.', { positionClass: 'toast-center' });
+                    // Additional handling if needed
+                }
+            });
+        });
+    });
+
+</script>
+
+</body>
+</html>
