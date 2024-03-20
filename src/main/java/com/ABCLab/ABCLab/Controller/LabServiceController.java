@@ -46,7 +46,7 @@ public class LabServiceController {
         labServiceRepo.save(labService);
     }*/
 
-    @GetMapping("/all")
+    @GetMapping("/Service/all")
     public ResponseEntity<List<LabService>> getAllServices(){
         List<LabService> labServices = labServiceRepo.findAll();
 
