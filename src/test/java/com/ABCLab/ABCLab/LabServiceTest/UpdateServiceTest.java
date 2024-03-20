@@ -1,6 +1,4 @@
 package com.ABCLab.ABCLab.LabServiceTest;
 
-public class testPosttests {
-
-
+public class UpdateServiceTest {
 }

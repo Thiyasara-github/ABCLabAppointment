@@ -31,6 +31,7 @@ public class LabServiceController {
 
     @PostMapping("/addService")
     public void addService(@RequestBody LabService labService){
+
         labServiceRepo.save(labService);
     }
 
