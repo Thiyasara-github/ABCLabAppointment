@@ -9,3 +9,6 @@ public interface LabServiceRepo extends MongoRepository<LabService, Integer> {
     @Query(value = "{}", sort = "{'sid' : -1}", fields = "{'sid' : 1}")
     LabService findMaxSid();
 }
+
+
+

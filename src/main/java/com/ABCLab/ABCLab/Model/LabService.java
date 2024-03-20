@@ -12,6 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 public class LabService {
 
+    public LabService(Integer sid, String sname, List<String> doctors, List<String> dates) {
+        this.sid = sid;
+        this.sname = sname;
+        this.doctors = doctors;
+        this.dates = dates;
+    }
+
     @Id
     private Integer sid;
     private String sname;
