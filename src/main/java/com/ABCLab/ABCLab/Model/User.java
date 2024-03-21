@@ -8,6 +8,15 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private String utype;
+
+    public String getUtype() {
+        return utype;
+    }
+
+    public void setUtype(String utype) {
+        this.utype = utype;
+    }
 
     public String getId() {
         return id;
