@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Test Result</title>
+    <title>Patient Test Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        #pdfLink {
-            margin-top: 20px;
+        /* Additional custom styles */
+        .container {
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
-<h1>Search Test Result</h1>
-<form id="searchForm">
-    <label for="resultId">Result ID:</label>
-    <input type="text" id="resultId" name="resultId" required>
-    <button type="submit">Search</button>
-</form>
+<div class="container">
+    <h1 class="mb-4">Search Test Result</h1>
+    <form id="searchForm">
+        <div class="form-group">
+            <label for="resultId">Result ID:</label>
+            <input type="text" class="form-control" id="resultId" name="resultId" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
 
-<div id="resultContainer"></div>
-<div id="pdfLink"></div>
+    <div id="resultContainer" class="mt-4"></div>
+    <div id="pdfLink" class="mt-4"></div>
+</div>
 
+<!-- Bootstrap JS (optional) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent form submission
@@ -56,6 +53,7 @@
         resultContainer.innerHTML = '';
 
         var table = document.createElement('table');
+        table.className = 'table table-bordered'; // Add Bootstrap table class
         var tbody = document.createElement('tbody');
 
         Object.entries(result).forEach(([key, value]) => {
@@ -73,13 +71,14 @@
         resultContainer.appendChild(table);
     }
 
-    function displayTxtLink(resultId) { // Updated function name
-        var txtLinkContainer = document.getElementById('pdfLink'); // Changed ID
-        txtLinkContainer.innerHTML = ''; // Clear previous content
+    function displayTxtLink(resultId) {
+        var txtLinkContainer = document.getElementById('pdfLink');
+        txtLinkContainer.innerHTML = '';
 
         var txtLink = document.createElement('a');
-        txtLink.href = 'http://localhost:8081/gettxt/' + resultId; // Updated endpoint
-        txtLink.textContent = 'Download Text'; // Updated text
+        txtLink.href = 'http://localhost:8081/gettxt/' + resultId;
+        txtLink.textContent = 'Download Text';
+        txtLink.className = 'btn btn-success'; // Add Bootstrap button class
         txtLinkContainer.appendChild(txtLink);
     }
 </script>
