@@ -4,16 +4,16 @@ import org.springframework.data.annotation.Id;
 
 public class User {
     @Id
-    private Integer id;
+    private String id;
     private String name;
     private String email;
     private String password;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
