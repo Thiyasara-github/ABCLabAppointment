@@ -1,7 +1,9 @@
 package com.ABCLab.ABCLab.Model;
 
-public class Results {
+import org.springframework.data.annotation.Id;
 
+public class Results {
+    @Id
     private String name;
     private String email;
     private String test;
