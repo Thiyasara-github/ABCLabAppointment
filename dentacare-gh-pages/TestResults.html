@@ -17,13 +17,8 @@
         th {
             background-color: #f2f2f2;
         }
-        #pdfContainer {
+        #pdfLink {
             margin-top: 20px;
-        }
-        #pdfViewer {
-            width: 100%;
-            height: 500px; /* Adjust height as needed */
-            border: 1px solid #dddddd;
         }
     </style>
 </head>
@@ -36,7 +31,7 @@
 </form>
 
 <div id="resultContainer"></div>
-<div id="pdfContainer"></div>
+<div id="pdfLink"></div>
 
 <script>
     document.getElementById('searchForm').addEventListener('submit', function(event) {
@@ -48,10 +43,9 @@
             .then(data => {
                 if (Object.keys(data).length > 0) {
                     displayResult(data);
-                    displayPdfViewer(resultId);
+                    displayTxtLink(resultId); // Updated function name
                 } else {
                     document.getElementById('resultContainer').innerHTML = '<p>No result found</p>';
-                    document.getElementById('pdfContainer').innerHTML = ''; // Clear PDF viewer
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -79,14 +73,14 @@
         resultContainer.appendChild(table);
     }
 
-    function displayPdfViewer(resultId) {
-        var pdfContainer = document.getElementById('pdfContainer');
-        pdfContainer.innerHTML = '';
+    function displayTxtLink(resultId) { // Updated function name
+        var txtLinkContainer = document.getElementById('pdfLink'); // Changed ID
+        txtLinkContainer.innerHTML = ''; // Clear previous content
 
-        var pdfViewer = document.createElement('iframe');
-        pdfViewer.id = 'pdfViewer';
-        pdfViewer.src = 'http://localhost:8081/getpdf/' + resultId;
-        pdfContainer.appendChild(pdfViewer);
+        var txtLink = document.createElement('a');
+        txtLink.href = 'http://localhost:8081/gettxt/' + resultId; // Updated endpoint
+        txtLink.textContent = 'Download Text'; // Updated text
+        txtLinkContainer.appendChild(txtLink);
     }
 </script>
 </body>
