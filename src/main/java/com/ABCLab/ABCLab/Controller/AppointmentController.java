@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 
@@ -79,10 +80,6 @@ public class AppointmentController {
         return savedAppointment;
     }
 
-
-
-
-
     private void sendConfirmationEmail(Appointment appointment) {
 
         String aid = String.valueOf(appointment.getAid());
@@ -112,4 +109,23 @@ public class AppointmentController {
 
     }
 
+    @DeleteMapping("/appointments/{name}")
+    public ResponseEntity<String> deleteAppointment(@PathVariable String name) {
+        try {
+            // Check if the appointment with the given aid exists
+            if (appointmentRepo.existsById(name)) {
+                // Delete the appointment
+                appointmentRepo.deleteById(name);
+                return new ResponseEntity<>("Appointment with ID " + name + " deleted successfully.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Appointment with ID " + name + " not found.", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to delete appointment with ID " + name + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
+
+
+
