@@ -5,3 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ResultsRepo extends MongoRepository<Results, String> {
 }
+
+
+

@@ -8,6 +8,25 @@ public class Results {
     private String email;
     private String test;
     private String doctor;
+    private String recommendations;
+    private byte[] pdfFileData; // Variable to hold PDF file data
+
+    // Getter and setter methods for pdfFileData
+    public byte[] getPdfFileData() {
+        return pdfFileData;
+    }
+
+    public void setPdfFileData(byte[] pdfFileData) {
+        this.pdfFileData = pdfFileData;
+    }
+
+    public String getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(String recommendations) {
+        this.recommendations = recommendations;
+    }
 
     public String getName() {
         return name;
