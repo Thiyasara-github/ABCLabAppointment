@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:63342")
+//@CrossOrigin(origins = "http://localhost:8081")
 public class UserController {
 
     private final UserRepo userRepository;
@@ -46,6 +47,29 @@ public class UserController {
         }
         return new ResponseEntity<>(labServices, HttpStatus.OK);
     }
+
+    @PutMapping("/updateuser/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User newUserDetails) {
+        // Check if the user with the given id exists in the database
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User existingUser = userOptional.get();
+
+            // Update user details
+            existingUser.setName(newUserDetails.getName());
+            existingUser.setEmail(newUserDetails.getEmail());
+            existingUser.setPassword(newUserDetails.getPassword());
+            existingUser.setUtype(newUserDetails.getUtype());
+
+            // Save the updated user
+            User updatedUser = userRepository.save(existingUser);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 
 }

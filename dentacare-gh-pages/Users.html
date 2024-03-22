@@ -3,27 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Table</title>
+    <title>User Management</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Custom styles */
         body {
             font-family: Arial, sans-serif;
+            padding-top: 50px;
         }
         .container {
-            margin-top: 50px;
-        }
-        th {
-            background-color: #343a40;
-            color: #fff;
+            margin-bottom: 50px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>User List</h2>
+    <h2>User Table</h2>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -32,37 +29,155 @@
             <th>Email</th>
             <th>Password</th>
             <th>User Type</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody id="userTableBody"></tbody>
     </table>
 </div>
 
+<div class="container">
+    <h2>Add New User</h2>
+    <form id="addUserForm">
+        <div class="form-group">
+            <label for="id">ID:</label>
+            <input type="text" class="form-control" id="id" name="id" readonly>
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="utype">User Type:</label>
+            <select class="form-control" id="utype" name="utype" required>
+                <option value="Admin">Admin</option>
+                <option value="Technician">Technician</option>
+            </select>
+        </div>
+        <!-- Hidden input field for user ID -->
+        <input type="hidden" id="userId" name="userId">
+        <button type="submit" class="btn btn-primary" id="addUserButton">Add User</button>
+        <button type="button" class="btn btn-primary" id="updateUserButton" onclick="updateUser()">Update User</button>
+    </form>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script>
-    // Fetch user data and populate the table
-    fetch('/getusers')
+    // Fetch user data from API endpoint
+    function fetchUsers() {
+        fetch('http://localhost:8081/getusers')
         .then(response => response.json())
         .then(data => {
-            const userTableBody = document.getElementById('userTableBody');
+            var tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = ''; // Clear previous table rows
+
+            // Loop through each user and add a row to the table
             data.forEach(user => {
-                const row = `
-                    <tr>
-                        <td>${user.id}</td>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.password}</td>
-                        <td>${user.utype}</td>
-                    </tr>
-                `;
-                userTableBody.innerHTML += row;
+                var row = `<tr>
+                                <td>${user.id}</td>
+                                <td>${user.name}</td>
+                                <td>${user.email}</td>
+                                <td>${user.password}</td>
+                                <td>${user.utype}</td>
+                                <td><button class="btn btn-sm btn-primary select-btn" data-userid="${user.id}">Select</button></td>
+                            </tr>`;
+                tableBody.innerHTML += row;
+            });
+
+            // Attach event listeners to select buttons
+            document.querySelectorAll('.select-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    var userId = this.getAttribute('data-userid');
+                    populateForm(userId);
+                });
             });
         })
         .catch(error => console.error('Error:', error));
+    }
+
+    // Function to populate form fields with user details
+function populateForm(userId) {
+    fetch(`http://localhost:8081/getuser/${userId}`)
+    .then(response => response.json())
+    .then(user => {
+        document.getElementById('id').value = user.id; // Fill ID field
+        document.getElementById('name').value = user.name;
+        document.getElementById('email').value = user.email;
+        document.getElementById('password').value = user.password;
+        document.getElementById('utype').value = user.utype;
+        document.getElementById('userId').value = userId; // Add hidden input field for user ID
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+    // Event listener for form submission
+    document.getElementById('addUserForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        var formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            utype: document.getElementById('utype').value
+        };
+
+        // Send a POST request to add new user
+        fetch('http://localhost:8081/addusers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Clear the form after submission
+            document.getElementById('addUserForm').reset();
+            // Fetch and display updated user table after adding new user
+            fetchUsers();
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Function to update user details
+    function updateUser() {
+        var userId = document.getElementById('userId').value; // Get user ID from hidden input field
+        var userDetails = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            utype: document.getElementById('utype').value
+        };
+
+        fetch(`http://localhost:8081/updateuser/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Fetch and display updated user table after updating user
+            fetchUsers();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Initial fetch of users
+    fetchUsers();
 </script>
 
 </body>
