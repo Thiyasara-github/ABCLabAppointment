@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:63342")
-//@CrossOrigin(origins = "http://localhost:8081")
 public class UserController {
 
     private final UserRepo userRepository;
@@ -47,6 +46,8 @@ public class UserController {
         }
         return new ResponseEntity<>(labServices, HttpStatus.OK);
     }
+
+
 
     @PutMapping("/updateuser/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User newUserDetails) {

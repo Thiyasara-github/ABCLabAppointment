@@ -24,12 +24,12 @@
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>Select</th>
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Password</th>
             <th>User Type</th>
-            <th>Action</th>
         </tr>
         </thead>
         <tbody id="userTableBody"></tbody>
@@ -37,8 +37,8 @@
 </div>
 
 <div class="container">
-    <h2>Add New User</h2>
-    <form id="addUserForm">
+    <h2>Edit User</h2>
+    <form id="editUserForm">
         <div class="form-group">
             <label for="id">ID:</label>
             <input type="text" class="form-control" id="id" name="id" readonly>
@@ -64,7 +64,6 @@
         </div>
         <!-- Hidden input field for user ID -->
         <input type="hidden" id="userId" name="userId">
-        <button type="submit" class="btn btn-primary" id="addUserButton">Add User</button>
         <button type="button" class="btn btn-primary" id="updateUserButton" onclick="updateUser()">Update User</button>
     </form>
 </div>
@@ -85,21 +84,23 @@
             // Loop through each user and add a row to the table
             data.forEach(user => {
                 var row = `<tr>
+                                <td><input type="checkbox" class="select-checkbox" data-userid="${user.id}"></td>
                                 <td>${user.id}</td>
                                 <td>${user.name}</td>
                                 <td>${user.email}</td>
                                 <td>${user.password}</td>
                                 <td>${user.utype}</td>
-                                <td><button class="btn btn-sm btn-primary select-btn" data-userid="${user.id}">Select</button></td>
                             </tr>`;
                 tableBody.innerHTML += row;
             });
 
-            // Attach event listeners to select buttons
-            document.querySelectorAll('.select-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    var userId = this.getAttribute('data-userid');
-                    populateForm(userId);
+            // Attach event listener to checkboxes
+            document.querySelectorAll('.select-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        var userId = this.getAttribute('data-userid');
+                        populateForm(userId);
+                    }
                 });
             });
         })
@@ -107,49 +108,19 @@
     }
 
     // Function to populate form fields with user details
-function populateForm(userId) {
-    fetch(`http://localhost:8081/getuser/${userId}`)
-    .then(response => response.json())
-    .then(user => {
-        document.getElementById('id').value = user.id; // Fill ID field
-        document.getElementById('name').value = user.name;
-        document.getElementById('email').value = user.email;
-        document.getElementById('password').value = user.password;
-        document.getElementById('utype').value = user.utype;
-        document.getElementById('userId').value = userId; // Add hidden input field for user ID
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-
-    // Event listener for form submission
-    document.getElementById('addUserForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission
-
-        var formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value,
-            utype: document.getElementById('utype').value
-        };
-
-        // Send a POST request to add new user
-        fetch('http://localhost:8081/addusers', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
+    function populateForm(userId) {
+        fetch(`http://localhost:8081/getuser/${userId}`)
         .then(response => response.json())
-        .then(data => {
-            // Clear the form after submission
-            document.getElementById('addUserForm').reset();
-            // Fetch and display updated user table after adding new user
-            fetchUsers();
+        .then(user => {
+            document.getElementById('id').value = user.id;
+            document.getElementById('name').value = user.name;
+            document.getElementById('email').value = user.email;
+            document.getElementById('password').value = user.password;
+            document.getElementById('utype').value = user.utype;
+            document.getElementById('userId').value = userId; // Add hidden input field for user ID
         })
         .catch(error => console.error('Error:', error));
-    });
+    }
 
     // Function to update user details
     function updateUser() {
