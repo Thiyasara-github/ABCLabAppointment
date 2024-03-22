@@ -13,6 +13,17 @@ import java.math.BigInteger;
 @NoArgsConstructor
 public class Appointment {
 
+    public Appointment(BigInteger aid, String name, String test, String email, String doctor, String datetime, String lastDigit, String paymentId) {
+        this.aid = aid;
+        this.name = name;
+        this.test = test;
+        this.email = email;
+        this.doctor = doctor;
+        this.datetime = datetime;
+        this.lastDigit = lastDigit;
+        this.paymentId = paymentId;
+    }
+
     @Id
     private BigInteger aid;
     private String name;

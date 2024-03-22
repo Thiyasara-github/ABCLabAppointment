@@ -27,6 +27,16 @@ public class AppointmentController {
         this.eventPublisher = eventPublisher;
     }
 
+    /**@GetMapping("/allAppointments")
+    public ResponseEntity<List<Appointment>> getAllAppointment(){
+        List<Appointment> appointments = appointmentRepo.findAll();
+
+        if(appointments.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(appointments);
+    }**/
+
     @GetMapping("/allAppointments")
     public ResponseEntity<List<Appointment>> getAllAppointments(){
         List<Appointment> appointment = appointmentRepo.findAll();

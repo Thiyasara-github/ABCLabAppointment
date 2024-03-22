@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <title>Educational Bootstrap 5 Registration Page Website Template</title>
+</head>
+<body>
+<section class="form-02-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="_lk_de">
+                    <div class="form-03-main">
+                        <div class="logo">
+                            <img src="assets/images/user.png">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="name" class="form-control _ge_de_ol" placeholder="Enter Name" required="">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" id="email" class="form-control _ge_de_ol" placeholder="Enter Email" required="">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" id="password" class="form-control _ge_de_ol" placeholder="Enter Password" required="">
+                        </div>
+
+                        <div class="form-group">
+                            <select id="usertype" class="form-control _ge_de_ol" required="">
+                                <option value="">Select User Type</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Technician">Technician</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" onclick="Register()">
+                            <div class="_btn_04">
+                                <a href="#">Register</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group nm_lk"><p>Already have an account? <a href="login.html">Login here</a></p></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function registerUser() {
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var password = $('#password').val();
+      var userType = $('#usertype').val();
+
+      // Perform registration logic here
+      // For now, just alert the user with the entered details
+      alert('Registration successful!\nName: ' + name + '\nEmail: ' + email + '\nUser Type: ' + userType);
+    }
+</script>
+</body>
+</html>
