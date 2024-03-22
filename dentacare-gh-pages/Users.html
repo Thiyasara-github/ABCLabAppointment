@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Table</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        th {
+            background-color: #343a40;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>User List</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>User Type</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Fetch user data and populate the table
+    fetch('/getusers')
+        .then(response => response.json())
+        .then(data => {
+            const userTableBody = document.getElementById('userTableBody');
+            data.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.password}</td>
+                        <td>${user.utype}</td>
+                    </tr>
+                `;
+                userTableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+
+</body>
+</html>

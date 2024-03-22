@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 60px;
+        }
+        #sidebar .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+        }
+        #content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <div class="list-group">
+        <a href="Services.html" class="list-group-item list-group-item-action bg-dark">Lab Tests</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark">Users</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark">Products</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark">Orders</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark">Settings</a>
+    </div>
+</div>
+
+<div id="content">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button type="button" id="sidebarCollapse" class="btn btn-dark">
+            <i class="fas fa-align-left"></i>
+            <span>Toggle Sidebar</span>
+        </button>
+    </nav>
+
+    <h2>Welcome to the Admin Dashboard</h2>
+    <p>This is the main content area. You can start building your dashboard here.</p>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+
+</body>
+</html>
