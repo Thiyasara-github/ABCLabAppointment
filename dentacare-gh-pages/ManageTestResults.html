@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Test Result</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-submit {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-4">Appointments</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Test</th>
+            <th>Doctor</th>
+            <th>Date & Time</th>
+        </tr>
+        </thead>
+        <tbody id="appointmentTableBody"></tbody>
+    </table>
+
+    <h2 class="mb-4">Add Test Result</h2>
+    <form id="addResultForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="test">Test:</label>
+            <input type="text" class="form-control" id="test" name="test" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="doctor">Doctor:</label>
+            <input type="text" class="form-control" id="doctor" name="doctor" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="recommendations">Recommendations:</label>
+            <textarea class="form-control" id="recommendations" name="recommendations" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS (optional) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Function to fetch and display appointments
+    function fetchAppointments() {
+        fetch('http://localhost:8081/allAppointments')
+        .then(response => response.json())
+        .then(data => {
+            var tableBody = document.getElementById('appointmentTableBody');
+            tableBody.innerHTML = ''; // Clear previous table rows
+
+            // Loop through each appointment and add a row to the table
+            data.forEach(appointment => {
+                var row = `<tr>
+                                <td><input type="checkbox" class="form-check-input" onclick="populateForm(this, '${appointment.name}', '${appointment.email}', '${appointment.test}', '${appointment.doctor}')" /></td>
+                                <td>${appointment.name}</td>
+                                <td>${appointment.email}</td>
+                                <td>${appointment.test}</td>
+                                <td>${appointment.doctor}</td>
+                                <td>${appointment.datetime}</td>
+                            </tr>`;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Call the function initially to fetch and display appointments
+    fetchAppointments();
+
+    // Function to populate form fields when a checkbox is clicked
+    function populateForm(checkbox, name, email, test, doctor) {
+        if (checkbox.checked) {
+            document.getElementById('name').value = name;
+            document.getElementById('email').value = email;
+            document.getElementById('test').value = test;
+            document.getElementById('doctor').value = doctor;
+            document.getElementById('recommendations').value = ''; // Clear recommendations
+            document.getElementById('recommendations').readOnly = false; // Allow editing recommendations
+        } else {
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('test').value = '';
+            document.getElementById('doctor').value = '';
+            document.getElementById('recommendations').value = '';
+            document.getElementById('recommendations').readOnly = true;
+        }
+    }
+
+    // Event listener for form submission
+    document.getElementById('addResultForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        var formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            test: document.getElementById('test').value,
+            doctor: document.getElementById('doctor').value,
+            recommendations: document.getElementById('recommendations').value
+        };
+
+        fetch('http://localhost:8081/addData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data); // Show response message
+            // Clear the form after submission (if needed)
+            document.getElementById('addResultForm').reset();
+            // Fetch and display updated appointments after adding new appointment
+            fetchAppointments();
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>

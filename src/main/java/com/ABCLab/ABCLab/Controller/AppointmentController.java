@@ -19,8 +19,6 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:63342")
 public class AppointmentController {
 
-
-
     private final AppointmentRepo appointmentRepo;
     private final ApplicationEventPublisher eventPublisher;
     @Autowired

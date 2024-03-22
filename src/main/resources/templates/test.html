@@ -3,91 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Test Result</title>
+    <title>Add Test Result</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        table {
-            border-collapse: collapse;
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-submit {
             width: 100%;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        #pdfContainer {
-            margin-top: 20px;
-        }
-        #pdfViewer {
-            width: 100%;
-            height: 500px; /* Adjust height as needed */
-            border: 1px solid #dddddd;
         }
     </style>
 </head>
 <body>
-<h1>Search Test Result</h1>
-<form id="searchForm">
-    <label for="resultId">Result ID:</label>
-    <input type="text" id="resultId" name="resultId" required>
-    <button type="submit">Search</button>
-</form>
+<div class="container">
+    <h2 class="mb-4">Add Test Result</h2>
+    <form id="addResultForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="test">Test:</label>
+            <input type="text" class="form-control" id="test" name="test" required>
+        </div>
+        <div class="form-group">
+            <label for="doctor">Doctor:</label>
+            <input type="text" class="form-control" id="doctor" name="doctor" required>
+        </div>
+        <div class="form-group">
+            <label for="recommendations">Recommendations:</label>
+            <textarea class="form-control" id="recommendations" name="recommendations" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+    </form>
+</div>
 
-<div id="resultContainer"></div>
-<div id="pdfContainer"></div>
-
+<!-- Bootstrap JS (optional) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.getElementById('searchForm').addEventListener('submit', function(event) {
+    document.getElementById('addResultForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent form submission
 
-        var resultId = document.getElementById('resultId').value;
-        fetch('http://localhost:8081/getpdf2/' + resultId)
-            .then(response => response.json())
-            .then(data => {
-                if (Object.keys(data).length > 0) {
-                    displayResult(data);
-                    displayPdfViewer(resultId);
-                } else {
-                    document.getElementById('resultContainer').innerHTML = '<p>No result found</p>';
-                    document.getElementById('pdfContainer').innerHTML = ''; // Clear PDF viewer
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        var formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            test: document.getElementById('test').value,
+            doctor: document.getElementById('doctor').value,
+            recommendations: document.getElementById('recommendations').value
+        };
+
+        fetch('http://localhost:8081/addData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data); // Show response message
+            // Clear the form after submission (if needed)
+            document.getElementById('addResultForm').reset();
+        })
+        .catch(error => console.error('Error:', error));
     });
-
-    function displayResult(result) {
-        var resultContainer = document.getElementById('resultContainer');
-        resultContainer.innerHTML = '';
-
-        var table = document.createElement('table');
-        var tbody = document.createElement('tbody');
-
-        Object.entries(result).forEach(([key, value]) => {
-            var row = document.createElement('tr');
-            var th = document.createElement('th');
-            th.textContent = key;
-            var td = document.createElement('td');
-            td.textContent = value;
-            row.appendChild(th);
-            row.appendChild(td);
-            tbody.appendChild(row);
-        });
-
-        table.appendChild(tbody);
-        resultContainer.appendChild(table);
-    }
-
-    function displayPdfViewer(resultId) {
-        var pdfContainer = document.getElementById('pdfContainer');
-        pdfContainer.innerHTML = '';
-
-        var pdfViewer = document.createElement('iframe');
-        pdfViewer.id = 'pdfViewer';
-        pdfViewer.src = 'http://localhost:8081/getpdf/' + resultId;
-        pdfContainer.appendChild(pdfViewer);
-    }
 </script>
 </body>
 </html>
